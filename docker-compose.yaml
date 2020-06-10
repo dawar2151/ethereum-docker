@@ -24,8 +24,6 @@ services:
     ports:
       - 30313:30313
       - 8545:8545  
-      
-      
   node_2:
     hostname: node_2
     links:
@@ -39,24 +37,24 @@ services:
     ports:
       - 30314:30314
       - 8546:8546
-    node_3:
-      hostname: node_3
-      links:
-        - bootnode
-      image: ethereum/client-go
-      command: --nousb --datadir /root/data --syncmode full --port 30315   --gasprice 0  --rpcapi eth,net,web3,admin,personal,miner --bootnodes enode://404e812e26469b4c76990fbad4d6cebdaf6384462607308d990e2d83bf1db9cc86b7c18474d3ed87b486682bf874334e1df3b0d5344492a52a229ce7d7d2c8ae@127.0.0.1:30301 --networkid 13234  --allow-insecure-unlock
-      volumes:
-        - ./nodes/node_3/keys/password:/root/files/password:ro
-        - ./nodes/node_3/data:/root/data:rw
-    node_4:
-      hostname: node_4
-      links:
-        - bootnode
-      image: ethereum/client-go
-      command: --nousb --datadir /root/data --syncmode full --port 30316  --gasprice 0 --rpcapi eth,net,web3,admin,personal,miner --bootnodes enode://404e812e26469b4c76990fbad4d6cebdaf6384462607308d990e2d83bf1db9cc86b7c18474d3ed87b486682bf874334e1df3b0d5344492a52a229ce7d7d2c8ae@127.0.0.1:30301 --networkid 13234  --allow-insecure-unlock
-      volumes:
-        - ./nodes/node_1/keys/password:/root/files/password:ro
-        - ./nodes/node_1/data:/root/data:rw
+  node_3:
+    hostname: node_3
+    links:
+      - bootnode
+    image: ethereum/client-go
+    command: --nousb --datadir /root/data --syncmode full --port 30315   --gasprice 0  --rpcapi eth,net,web3,admin,personal,miner --bootnodes enode://404e812e26469b4c76990fbad4d6cebdaf6384462607308d990e2d83bf1db9cc86b7c18474d3ed87b486682bf874334e1df3b0d5344492a52a229ce7d7d2c8ae@127.0.0.1:30301 --networkid 13234  --allow-insecure-unlock
+    volumes:
+      - ./nodes/node_3/keys/password:/root/files/password:ro
+      - ./nodes/node_3/data:/root/data:rw
+  node_4:
+    hostname: node_4
+    links:
+      - bootnode
+    image: ethereum/client-go
+    command: --nousb --datadir /root/data --syncmode full --port 30316  --gasprice 0 --rpcapi eth,net,web3,admin,personal,miner --bootnodes enode://404e812e26469b4c76990fbad4d6cebdaf6384462607308d990e2d83bf1db9cc86b7c18474d3ed87b486682bf874334e1df3b0d5344492a52a229ce7d7d2c8ae@127.0.0.1:30301 --networkid 13234  --allow-insecure-unlock
+    volumes:
+      - ./nodes/node_1/keys/password:/root/files/password:ro
+      - ./nodes/node_1/data:/root/data:rw
   netstats:
     build: netstats
     restart: on-failure
