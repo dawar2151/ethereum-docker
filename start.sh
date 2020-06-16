@@ -36,7 +36,7 @@ createNodes(){
         cat $keys_path/key | grep pub -A 5 | tail -n +2 | tr -d '\n[:space:]:' | sed 's/^04//' > $keys_path/pub.key
         cat $keys_path/key | grep priv -A 3 | tail -n +2 | tr -d '\n[:space:]:' | sed 's/^00//' > $keys_path/priv.key
     done
-    python3 genesisGen.py "$nodes_path" "$number_node" "$chain_id"
+    python genesisGen.py "$nodes_path" "$number_node" "$chain_id"
 }
 importNodes(){
     for i in `seq 1 $number_node`;
@@ -64,7 +64,6 @@ saveStartNodes(){
         line=$(head -n 1  "$nodes_path/bootEnode.key")
         port=$((30312+$i))
         rpc_port=$((8501+$i))
-        echo $port
         cmd="geth --nousb --datadir node_$i/data --syncmode full --port $port --rpc --rpcaddr \"0.0.0.0\" --rpccorsdomain \"*\" --gasprice 0 --rpcport $rpc_port --rpcapi db,eth,net,web3,admin,personal,miner,signer:insecure_unlock_protect --bootnodes enode://$line@10.0.101.4:30310 --networkid $chain_id  --unlock 0 --password node_$i/keys/password --mine --allow-insecure-unlock"
         if [ $i = 1 ]
         then
@@ -74,8 +73,25 @@ saveStartNodes(){
         fi
     done
 }
+saveEnodes(){
+    enodes=()
+    for i in `seq 1 $number_node`;
+    do
+        port=$((30312+$i))
+        data_path="$nodes_path/node_$i/data"
+        path="$nodes_path/node_$i/keys/pub.key"
+        line=$(head -n 1  "$path")
+        enodes+="enode://$line@127.0.0.1:$port" 
+    done
+    for i in `seq 1 $number_node`;
+    do
+        data_path="$nodes_path/node_$i/data"
+        printf "%s\n" "${enodes[@]}" > "$data_path/static-nodes.json"
+    done
+}
 createNodes
 importNodes
 initBC
 initBootNode
 saveStartNodes
+saveEnodes

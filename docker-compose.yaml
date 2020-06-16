@@ -1,60 +1,58 @@
 version: "3"
 services:
-  bootnode:
-    hostname: bootnode
-    container_name: bootnode
-    build:
-      context: ./bootnode 
-    command: bootnode -nodekey /tmp/boot.key
-    volumes:
-      - ./nodes/boot.key:/tmp/boot.key
-    ports:
-      - 30303:30303/udp
-      - 30301:30301/udp
+  # bootnode:
+  #   hostname: bootnode
+  #   container_name: bootnode
+  #   build:
+  #     context: ./bootnode 
+  #   command: bootnode -nodekey /tmp/boot.key
+  #   volumes:
+  #     - ./nodes/boot.key:/tmp/boot.key
+  #   ports:
+  #     - 30303:30303/udp
+  #     - 30301:30301/udp
   node_1:
     hostname: node_1
     links:
-      - bootnode
       - netstats
     image: ethereum/client-go
-    command: --nousb --datadir /root/data --syncmode full --port 30313 --rpc --rpcaddr "0.0.0.0" --rpccorsdomain "*" --gasprice 0 --rpcport 8545 --rpcapi eth,net,web3,admin,personal,miner --bootnodes enode://404e812e26469b4c76990fbad4d6cebdaf6384462607308d990e2d83bf1db9cc86b7c18474d3ed87b486682bf874334e1df3b0d5344492a52a229ce7d7d2c8ae@127.0.0.1:30301 --networkid 13234 --mine --allow-insecure-unlock 
+    command:  --datadir  /root/data --syncmode full --nodekey /root/files/priv.key --port 30313 --rpc --rpcaddr "0.0.0.0" --rpccorsdomain "*" --gasprice 0 --rpcport 8502 --rpcapi db,eth,net,web3,admin,personal,miner,signer:insecure_unlock_protect  --networkid 1234 --unlock 0 --password /root/files/password --mine --allow-insecure-unlock
     volumes:
       - ./nodes/node_1/keys/password:/root/files/password:ro
+      - ./nodes/node_1/keys/priv.key:/root/files/priv.key:ro
       - ./nodes/node_1/data:/root/data:rw
     ports:
       - 30313:30313
-      - 8545:8545  
+      - 8502:8502
   node_2:
     hostname: node_2
     links:
-      - bootnode
       - netstats
     image: ethereum/client-go
-    command: --nousb --datadir /root/data --syncmode full --port 30314 --rpc --rpcaddr "0.0.0.0" --rpccorsdomain "*" --gasprice 0 --rpcport 8546 --rpcapi eth,net,web3,admin,personal,miner --bootnodes enode://404e812e26469b4c76990fbad4d6cebdaf6384462607308d990e2d83bf1db9cc86b7c18474d3ed87b486682bf874334e1df3b0d5344492a52a229ce7d7d2c8ae@127.0.0.1:30301 --networkid 13234  --allow-insecure-unlock
+    command:  --datadir /root/data --syncmode full --nodekey /root/files/priv.key --port 30314 --rpc --rpcaddr "0.0.0.0" --rpccorsdomain "*" --gasprice 0 --rpcport 8503 --rpcapi db,eth,net,web3,admin,personal,miner,signer:insecure_unlock_protect  --networkid 1234 --unlock 0 --password /root/files/password --mine --allow-insecure-unlock
     volumes:
       - ./nodes/node_2/keys/password:/root/files/password:ro
+      - ./nodes/node_2/keys/priv.key:/root/files/priv.key:ro
       - ./nodes/node_2/data:/root/data:rw
     ports:
       - 30314:30314
-      - 8546:8546
+      - 8503:8503
   node_3:
     hostname: node_3
-    links:
-      - bootnode
     image: ethereum/client-go
-    command: --nousb --datadir /root/data --syncmode full --port 30315   --gasprice 0  --rpcapi eth,net,web3,admin,personal,miner --bootnodes enode://404e812e26469b4c76990fbad4d6cebdaf6384462607308d990e2d83bf1db9cc86b7c18474d3ed87b486682bf874334e1df3b0d5344492a52a229ce7d7d2c8ae@127.0.0.1:30301 --networkid 13234  --allow-insecure-unlock
+    command:  --datadir /root/data --syncmode full --nodekey /root/files/priv.key --port 30315 --rpc --rpcaddr "0.0.0.0" --rpccorsdomain "*" --gasprice 0 --rpcport 8504 --rpcapi db,eth,net,web3,admin,personal,miner,signer:insecure_unlock_protect --networkid 1234 --unlock 0 --password /root/files/password --mine --allow-insecure-unlock
     volumes:
       - ./nodes/node_3/keys/password:/root/files/password:ro
+      - ./nodes/node_3/keys/priv.key:/root/files/priv.key:ro
       - ./nodes/node_3/data:/root/data:rw
   node_4:
     hostname: node_4
-    links:
-      - bootnode
     image: ethereum/client-go
-    command: --nousb --datadir /root/data --syncmode full --port 30316  --gasprice 0 --rpcapi eth,net,web3,admin,personal,miner --bootnodes enode://404e812e26469b4c76990fbad4d6cebdaf6384462607308d990e2d83bf1db9cc86b7c18474d3ed87b486682bf874334e1df3b0d5344492a52a229ce7d7d2c8ae@127.0.0.1:30301 --networkid 13234  --allow-insecure-unlock
+    command:  --datadir /root/data --syncmode full --nodekey /root/files/priv.key --port 30316 --rpc --rpcaddr "0.0.0.0" --rpccorsdomain "*"  --gasprice 0 --rpcapi db,eth,net,web3,admin,personal,miner,signer:insecure_unlock_protect --networkid 13234  --allow-insecure-unlock --networkid 1234 --unlock 0 --password /root/files/password --mine --allow-insecure-unlock
     volumes:
-      - ./nodes/node_1/keys/password:/root/files/password:ro
-      - ./nodes/node_1/data:/root/data:rw
+      - ./nodes/node_4/keys/password:/root/files/password:ro
+      - ./nodes/node_4/keys/priv.key:/root/files/priv.key:ro
+      - ./nodes/node_4/data:/root/data:rw
   netstats:
     build: netstats
     restart: on-failure
