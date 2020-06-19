@@ -2,7 +2,7 @@
 nodes_path="./"
 number_node=4
 chain_id="1114"
-
+id_address="127.0.0.1"
 getNumberNodes(){
     echo "Enter number of nodes:"
     read number_node
@@ -20,9 +20,16 @@ getChainId(){
     eval  "$1=$chain_id" 
     
 }
+getIpAddress(){
+    echo "Enter the public/private ip adddress:"
+    read ip_address
+    eval  "$1=$ip_address" 
+    
+}
 getNumberNodes number_node
 getNodesPath nodes_path
 getChainId chain_id
+getIpAddress ip_address
 
 #Generate the cryptographic material for all nodes
 createNodes(){
@@ -71,12 +78,12 @@ getEnodesByIndex(){
             lf="$(($number_node-1))"
             if [ "$i" -eq "$number_node" ]
             then
-                enodes+='"enode://'$line'@127.0.0.1:'$port'"'$'\r'
+                enodes+='"enode://'$line'@'$ip_address':'$port'"'$'\r'
             elif [ "$number_node" -eq "$1" ] && [ "$i" -eq "$lf" ]
             then
-                enodes+='"enode://'$line'@127.0.0.1:'$port'"'$'\r'   
+                enodes+='"enode://'$line'@'$ip_address':'$port'"'$'\r'   
             else
-                enodes+='"enode://'$line'@127.0.0.1:'$port'",'$'\r'
+                enodes+='"enode://'$line'@'$ip_address':'$port'",'$'\r'
             fi    
         fi    
     done
