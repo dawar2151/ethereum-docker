@@ -98,6 +98,8 @@ saveEnodes(){
         printf "%s\n" "${enodes[@]}" >> "$data_path/static-nodes.json"
         echo "]" >> "$data_path/static-nodes.json"
     done
+        python yamlGen.py "$nodes_path" "$number_node" "$chain_id"
+
 }
 
 createNodes
