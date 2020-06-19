@@ -23,6 +23,8 @@ getChainId(){
 getNumberNodes number_node
 getNodesPath nodes_path
 getChainId chain_id
+
+#Generate the cryptographic material for all nodes
 createNodes(){
     if [ -d "$nodes_path" ]; then rm -Rf $nodes_path; fi
     for i in `seq 1 $number_node`;
@@ -38,6 +40,7 @@ createNodes(){
     done
     python genesisGen.py "$nodes_path" "$number_node" "$chain_id"
 }
+#Import the generated nodes cryptographics materials to the blockchain network
 importNodes(){
     for i in `seq 1 $number_node`;
     do
@@ -45,6 +48,7 @@ importNodes(){
         geth --nousb account import  --datadir "$path/data" --password "$path/keys/password" "$path/keys/priv.key"
     done
 }
+#Initialise the nodes data folder with genesis block configuration
 initBC(){
     for i in `seq 1 $number_node`;
     do
@@ -52,46 +56,44 @@ initBC(){
         geth --nousb --datadir  "$path/data" init "$nodes_path/genesis.json"
     done
 }
-initBootNode(){
-    bootnode -genkey "$nodes_path/boot.key"
-    bootnode -nodekey "$nodes_path/boot.key" -writeaddress > "$nodes_path/bootEnode.key"
-}
 
-saveStartNodes(){
-    for i in `seq 1 $number_node`;
-    do
-        path="$nodes_path/node_$i"
-        line=$(head -n 1  "$nodes_path/bootEnode.key")
-        port=$((30312+$i))
-        rpc_port=$((8501+$i))
-        cmd="geth --nousb --datadir node_$i/data --syncmode full --port $port --rpc --rpcaddr \"0.0.0.0\" --rpccorsdomain \"*\" --gasprice 0 --rpcport $rpc_port --rpcapi db,eth,net,web3,admin,personal,miner,signer:insecure_unlock_protect --bootnodes enode://$line@10.0.101.4:30310 --networkid $chain_id  --unlock 0 --password node_$i/keys/password --mine --allow-insecure-unlock"
-        if [ $i = 1 ]
-        then
-            echo $cmd > "$nodes_path/startNodes"
-        else
-            echo $cmd >> "$nodes_path/startNodes"
-        fi
-    done
-}
-saveEnodes(){
+#Generate the enodes keys in order to sync nodes each others
+getEnodesByIndex(){
     enodes=()
     for i in `seq 1 $number_node`;
     do
-        port=$((30312+$i))
-        data_path="$nodes_path/node_$i/data"
-        path="$nodes_path/node_$i/keys/pub.key"
-        line=$(head -n 1  "$path")
-        enodes+="enode://$line@127.0.0.1:$port" 
+        if [ "$i" != "$1" ]
+        then
+            port=$((30312+$i))
+            data_path="$nodes_path/node_$i/data"
+            path="$nodes_path/node_$i/keys/pub.key"
+            line=$(head -n 1  "$path")
+            lf="$(($number_node-1))"
+            if [ "$i" -eq "$number_node" ]
+            then
+                enodes+='"enode://'$line'@127.0.0.1:'$port'"'$'\r'
+            elif [ "$number_node" -eq "$1" ] && [ "$i" -eq "$lf" ]
+            then
+                enodes+='"enode://'$line'@127.0.0.1:'$port'"'$'\r'   
+            else
+                enodes+='"enode://'$line'@127.0.0.1:'$port'",'$'\r'
+            fi    
+        fi    
     done
+    echo "${enodes[@]}"
+}
+saveEnodes(){
     for i in `seq 1 $number_node`;
     do
         data_path="$nodes_path/node_$i/data"
-        printf "%s\n" "${enodes[@]}" > "$data_path/static-nodes.json"
+        echo "[" > "$data_path/static-nodes.json"
+        enodes=$(getEnodesByIndex $i)
+        printf "%s\n" "${enodes[@]}" >> "$data_path/static-nodes.json"
+        echo "]" >> "$data_path/static-nodes.json"
     done
 }
+
 createNodes
 importNodes
 initBC
-initBootNode
-saveStartNodes
 saveEnodes
