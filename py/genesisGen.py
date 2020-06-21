@@ -14,9 +14,7 @@ def exportGenesis(consortium,chainId):
 	res = {}
 	if consortium == "poa" :
 		res = cliqueGenesis(addressList,chainId)
-	if consortium == "pow" :
-		res = etashGenesis(addressList,chainId)
-	with open(nodes_path+'/genesis.json', 'w') as outfile :
+	with open(nodes_path+"/genesis.json", "w") as outfile :
 		json.dump(res, outfile)
 	outfile.close()
 	return
@@ -47,25 +45,7 @@ def cliqueGenesis(addresses,chainId):
 	res["difficulty"] = "0x2"
 	res["timestamp"] = "0x5d934f79"
 	return res
-def etashGenesis(addresses,chainId):
-	res = baseGenesis()
-	allocs = {}
-	for address in addresses :
-		allocs[address] = {
-			"balance": "1000000000000000000000000000"
-		}
-	res["alloc"] = allocs
-	res["extraData"] = "0x0"
-	res["config"] = {
-		"chainID": chainId,
-		"homesteadBlock": 0,
-		"eip155Block": 0,
-		"eip158Block": 0
-	}
-	res["nonce"] = "0x0000000000000042"
-	res["difficulty"] = "0x2000"
-	res["timestamp"] = "0x00"
-	return res
+
 def baseGenesis():
 	return {
 		"mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
@@ -81,7 +61,7 @@ def getAdresses(pubKeyList):
 def readPubKeys():
 	res = []
 	for i in range(1, int(number_node)+1):
-		filename = nodes_path+'/node_'+str(i)+'/keys/pub.key'
+		filename = nodes_path+"/node_"+str(i)+"/keys/pub.key"
 		fileReader = open(filename, "r")
 		currentLine = fileReader.readline()
 		while currentLine != "" :
@@ -91,14 +71,14 @@ def readPubKeys():
 	return res
 
 def public_to_address(public_key):
-	public_key_bytes = codecs.decode(public_key, 'hex')
+	public_key_bytes = codecs.decode(public_key, "hex")
 	keccak_hash = keccak.new(digest_bits=256)
 	keccak_hash.update(public_key_bytes)
 	keccak_digest = keccak_hash.hexdigest()
 	# Take last 20 bytes
 	wallet_len = 40
-	wallet = '0x' + keccak_digest[-wallet_len:]
+	wallet = "0x" + keccak_digest[-wallet_len:]
 	return wallet
 
-if __name__ == '__main__':
-    exportGenesis('poa', chain_id)
+if __name__ == "__main__":
+    exportGenesis("poa", chain_id)

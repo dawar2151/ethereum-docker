@@ -42,10 +42,10 @@ createNodes(){
         keys_path="$nodes_path/node_$i/keys"
         openssl ecparam -name secp256k1 -genkey -noout | openssl ec -text -noout > $keys_path/key
         echo "node_$i" > $keys_path/password
-        cat $keys_path/key | grep pub -A 5 | tail -n +2 | tr -d '\n[:space:]:' | sed 's/^04//' > $keys_path/pub.key
-        cat $keys_path/key | grep priv -A 3 | tail -n +2 | tr -d '\n[:space:]:' | sed 's/^00//' > $keys_path/priv.key
+        cat $keys_path/key | grep pub -A 5 | tail -n +2 | tr -d "\n[:space:]:" | sed "s/^04//" > $keys_path/pub.key
+        cat $keys_path/key | grep priv -A 3 | tail -n +2 | tr -d "\n[:space:]:" | sed "s/^00//" > $keys_path/priv.key
     done
-    python genesisGen.py "$nodes_path" "$number_node" "$chain_id"
+    python py/genesisGen.py "$nodes_path" "$number_node" "$chain_id"
 }
 #Import the generated nodes cryptographics materials to the blockchain network
 importNodes(){
@@ -64,7 +64,7 @@ initBC(){
     done
 }
 
-#Generate the enodes keys in order to sync nodes each others
+#Generate the enodes keys to sync nodes each others
 getEnodesByIndex(){
     enodes=()
     for i in `seq 1 $number_node`;
@@ -78,12 +78,12 @@ getEnodesByIndex(){
             lf="$(($number_node-1))"
             if [ "$i" -eq "$number_node" ]
             then
-                enodes+='"enode://'$line'@'$ip_address':'$port'"'$'\r'
+                enodes+=""enode://"$line"@"$ip_address":"$port"""$"\r"
             elif [ "$number_node" -eq "$1" ] && [ "$i" -eq "$lf" ]
             then
-                enodes+='"enode://'$line'@'$ip_address':'$port'"'$'\r'   
+                enodes+=""enode://"$line"@"$ip_address":"$port"""$"\r"   
             else
-                enodes+='"enode://'$line'@'$ip_address':'$port'",'$'\r'
+                enodes+=""enode://"$line"@"$ip_address":"$port"","$"\r"
             fi    
         fi    
     done
@@ -98,7 +98,7 @@ saveEnodes(){
         printf "%s\n" "${enodes[@]}" >> "$data_path/static-nodes.json"
         echo "]" >> "$data_path/static-nodes.json"
     done
-        python yamlGen.py "$nodes_path" "$number_node" "$chain_id"
+        python py/yamlGen.py "$nodes_path" "$number_node" "$chain_id"
 
 }
 
