@@ -78,12 +78,12 @@ getEnodesByIndex(){
             lf="$(($number_node-1))"
             if [ "$i" -eq "$number_node" ]
             then
-                enodes+=""enode://"$line"@"$ip_address":"$port"""$"\r"
+                enodes+='"enode://'$line'@'$ip_address':'$port'"'$'\r'
             elif [ "$number_node" -eq "$1" ] && [ "$i" -eq "$lf" ]
             then
-                enodes+=""enode://"$line"@"$ip_address":"$port"""$"\r"   
+                enodes+='"enode://'$line'@'$ip_address':'$port'"'$'\r'   
             else
-                enodes+=""enode://"$line"@"$ip_address":"$port"","$"\r"
+                enodes+='"enode://'$line'@'$ip_address':'$port'",'$'\r'
             fi    
         fi    
     done
