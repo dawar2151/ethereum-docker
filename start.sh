@@ -21,7 +21,7 @@ getChainId(){
     
 }
 getIpAddress(){
-    echo "Enter the public/private ip adddress:"
+    echo "Enter the public/private ip address:"
     read ip_address
     eval  "$1=$ip_address" 
     
