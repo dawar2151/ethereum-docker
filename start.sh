@@ -31,7 +31,7 @@ getNodesPath nodes_path
 getChainId chain_id
 getIpAddress ip_address
 
-#Generate the cryptographic material for all nodes
+# Generate the cryptographic material for all nodes
 createNodes(){
     if [ -d "$nodes_path" ]; then rm -Rf $nodes_path; fi
     for i in `seq 1 $number_node`;
@@ -47,7 +47,7 @@ createNodes(){
     done
     python py/genesisGen.py "$nodes_path" "$number_node" "$chain_id"
 }
-#Import the generated nodes cryptographics materials to the blockchain network
+# Import the generated nodes cryptographics materials to the blockchain network
 importNodes(){
     for i in `seq 1 $number_node`;
     do
@@ -55,7 +55,7 @@ importNodes(){
         geth --nousb account import  --datadir "$path/data" --password "$path/keys/password" "$path/keys/priv.key"
     done
 }
-#Initialise the nodes data folder with genesis block configuration
+# Initialise the nodes data folder with genesis block configuration
 initBC(){
     for i in `seq 1 $number_node`;
     do
@@ -64,7 +64,7 @@ initBC(){
     done
 }
 
-#Generate the enodes keys to sync nodes each others
+# Generate the enodes keys to sync nodes each others
 getEnodesByIndex(){
     enodes=()
     for i in `seq 1 $number_node`;
@@ -89,6 +89,7 @@ getEnodesByIndex(){
     done
     echo "${enodes[@]}"
 }
+# Save enodes in every node's data folder & export docker-compose file
 saveEnodes(){
     for i in `seq 1 $number_node`;
     do
@@ -98,7 +99,7 @@ saveEnodes(){
         printf "%s\n" "${enodes[@]}" >> "$data_path/static-nodes.json"
         echo "]" >> "$data_path/static-nodes.json"
     done
-        python py/yamlGen.py "$nodes_path" "$number_node" "$chain_id"
+    python py/yamlGen.py "$nodes_path" "$number_node" "$chain_id"
 
 }
 
