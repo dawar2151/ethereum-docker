@@ -70,18 +70,10 @@ From `https://test.docker.com`:
 curl -fsSL https://test.docker.com -o test-docker.sh
 sh test-docker.sh
 ```
-
-From the source repo (This will install latest from the `test` channel):
-```shell
-sh install.sh
-```
-
-## Testing:
-
-To verify that the install script works amongst the supported operating systems run:
+Start the script
 
 ```shell
-make check
+sh start.sh
 ```
 ## Run nodes
 ```shell
