@@ -1,7 +1,16 @@
-#!/bin/bash
+#!/bin/bash -       
+#title           : start.sh
+#description     : Build private containerized ethereum blockchain.
+#author		     : ET-TAOUSY Zouhair
+#date            : 20111101
+#version         : 0.4    
+#usage		     : sh start.sh
+#bash_version    : 4.1.5(1)-release
+#==========================================================================
+
 nodes_path="./"
 number_node=4
-chain_id="1114"
+chain_id="1234"
 id_address="127.0.0.1"
 getNumberNodes(){
     echo "Enter number of nodes:"
