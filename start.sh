@@ -1,4 +1,5 @@
-#!/bin/bash -       
+#!/usr/local/bin/bash
+echo $BASH_VERSION    
 #title           : start.sh
 #description     : Build private containerized ethereum blockchain.
 #author		     : ET-TAOUSY Zouhair
@@ -11,7 +12,7 @@
 nodes_path="./"
 number_node=4
 chain_id="1234"
-id_address="127.0.0.1"
+declare -A addresses
 getNumberNodes(){
     echo "Enter number of nodes:"
     read number_node
@@ -30,15 +31,17 @@ getChainId(){
     
 }
 getIpAddress(){
-    echo "Enter the public/private ip address:"
-    read ip_address
-    eval  "$1=$ip_address" 
-    
+    for i in `seq 1 $number_node`;
+    do
+        echo "Enter the public/private ip address of node $i:"
+        read ip_address
+        addresses[$i]=$ip_address 
+    done
 }
 getNumberNodes number_node
 getNodesPath nodes_path
 getChainId chain_id
-getIpAddress ip_address
+getIpAddress addresses
 
 # Generate the cryptographic material for all nodes
 createNodes(){
@@ -87,12 +90,12 @@ getEnodesByIndex(){
             lf="$(($number_node-1))"
             if [ "$i" -eq "$number_node" ]
             then
-                enodes+='"enode://'$line'@'$ip_address':'$port'"'$'\r'
+                enodes+='"enode://'$line'@'${addresses[${i}]}':'$port'"'$'\r'
             elif [ "$number_node" -eq "$1" ] && [ "$i" -eq "$lf" ]
             then
-                enodes+='"enode://'$line'@'$ip_address':'$port'"'$'\r'   
+                enodes+='"enode://'$line'@'${addresses[${i}]}':'$port'"'$'\r'   
             else
-                enodes+='"enode://'$line'@'$ip_address':'$port'",'$'\r'
+                enodes+='"enode://'$line'@'${addresses[${i}]}':'$port'",'$'\r'
             fi    
         fi    
     done
