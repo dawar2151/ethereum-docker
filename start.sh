@@ -88,7 +88,6 @@ getEnodesByIndex(){
             path="$nodes_path/node_$i/keys/pub.key"
             line=$(head -n 1  "$path")
             lf="$(($number_node-1))"
-            read ip_address
             if [ "$i" -eq "$number_node" ]
             then
                 enodes+='"enode://'$line'@'${addresses[${i}]}':'$port'"'$'\r'
@@ -119,5 +118,4 @@ saveEnodes(){
 createNodes
 importNodes
 initBC
-echo "Type nodes ip addresses: node1_ipaddress enter...node2_ipaddress..."
 saveEnodes
