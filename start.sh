@@ -57,7 +57,7 @@ createNodes(){
         cat $keys_path/key | grep pub -A 5 | tail -n +2 | tr -d "\n[:space:]:" | sed "s/^04//" > $keys_path/pub.key
         cat $keys_path/key | grep priv -A 3 | tail -n +2 | tr -d "\n[:space:]:" | sed "s/^00//" > $keys_path/priv.key
     done
-    python py/genesisGen.py "$nodes_path" "$number_node" "$chain_id"
+    python3 py/genesisGen.py "$nodes_path" "$number_node" "$chain_id"
 }
 # Import the generated nodes cryptographics materials to the blockchain network
 importNodes(){
@@ -88,6 +88,7 @@ getEnodesByIndex(){
             path="$nodes_path/node_$i/keys/pub.key"
             line=$(head -n 1  "$path")
             lf="$(($number_node-1))"
+            read ip_address
             if [ "$i" -eq "$number_node" ]
             then
                 enodes+='"enode://'$line'@'${addresses[${i}]}':'$port'"'$'\r'
@@ -111,11 +112,12 @@ saveEnodes(){
         printf "%s\n" "${enodes[@]}" >> "$data_path/static-nodes.json"
         echo "]" >> "$data_path/static-nodes.json"
     done
-    python py/yamlGen.py "$nodes_path" "$number_node" "$chain_id"
+    python3 py/yamlGen.py "$nodes_path" "$number_node" "$chain_id"
 
 }
 
 createNodes
 importNodes
 initBC
+echo "Type nodes ip addresses: node1_ipaddress enter...node2_ipaddress..."
 saveEnodes
