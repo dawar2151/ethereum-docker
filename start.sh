@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/usr/bin/env bash
 echo $BASH_VERSION    
 #title           : start.sh
 #description     : Build private containerized ethereum blockchain.
@@ -41,7 +41,7 @@ getIpAddress(){
 getNumberNodes number_node
 getNodesPath nodes_path
 getChainId chain_id
-getIpAddress addresses
+#getIpAddress addresses
 
 # Generate the cryptographic material for all nodes
 createNodes(){
@@ -93,9 +93,9 @@ getEnodesByIndex(){
                 enodes+='"enode://'$line'@'${addresses[${i}]}':'$port'"'$'\r'
             elif [ "$number_node" -eq "$1" ] && [ "$i" -eq "$lf" ]
             then
-                enodes+='"enode://'$line'@'${addresses[${i}]}':'$port'"'$'\r'   
+                enodes+='"enode://'$line'@node'${i}':'$port'"'$'\r'   
             else
-                enodes+='"enode://'$line'@'${addresses[${i}]}':'$port'",'$'\r'
+                enodes+='"enode://'$line'@node'${i}':'$port'",'$'\r'
             fi    
         fi    
     done
