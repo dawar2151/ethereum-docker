@@ -1,4 +1,4 @@
 ecdsa==0.13.3
 pycryptodome==3.9.0
 keccak-hash==1.4.3
-PyYAML==5.3.1
+PyYAML==5.4
